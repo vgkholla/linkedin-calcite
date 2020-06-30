@@ -27,10 +27,13 @@ while [ -z "$API_KEY" ]; do
   echo
 done
 
+echo "If you want a custom version suffix, please specify it. This is useful when generating artifacts for testing. Leave empty if creating a usable release"
+read DEV_VERSION
+
 echo "Generating build version"
 VERSION_PREFIX=$(grep -E "<calciteVersion>(.*)</calciteVersion>" pom.xml | cut -d'>' -f2 | cut -d'<' -f1)
 GIT_COMMIT_ID=$(git rev-parse --short HEAD)
-BUILD_VERSION=${VERSION_PREFIX}-${GIT_COMMIT_ID}
+BUILD_VERSION=${VERSION_PREFIX}-${GIT_COMMIT_ID}${DEV_VERSION}
 echo "Current build version: ${BUILD_VERSION}"
 echo "Setting version in mvn (discard any changes to repository once publish is complete)"
 mvn versions:set -DnewVersion="$BUILD_VERSION" -q -B
